@@ -43,3 +43,9 @@ _deps
 *.out
 *.app
 .DS_STORE
+
+monitor
+settings.json
+build/*
+*.json
+.github/**
