@@ -72,18 +72,64 @@ float LinuxParser::MemoryUtilization() { return 0.0; }
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
+// COMPLETED: Read and return the number of jiffies for the system
+long LinuxParser::Jiffies()
+{
+    return UpTime() * sysconf(_SC_CLK_TCK);
+}
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
+// COMPLETED: Read and return the number of active jiffies for a PID
+long LinuxParser::ActiveJiffies(int pid)
+{
+    string line, propValue;
+    float jiffies = 0.0;
+    std::ifstream pidFileStream(kProcDirectory + std::to_string(pid) + kStatFilename);
+    if (pidFileStream.is_open())
+    {
+        while (getline(pidFileStream, line))
+        {
+            std::istringstream lineStream(line);
+            for (int i{0}; i < 17; i++)
+            {
+                lineStream >> propValue;
+                if (i >= 13)
+                    jiffies = stol(propValue);
+            }
+        }
+    }
 
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
+    return 0;
+}
 
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+// COMPLETED: Read and return the number of active jiffies for the system
+long LinuxParser::ActiveJiffies()
+{
+    auto cpu_load = LinuxParser::CpuUtilization();
+    vector<int> cpu_states{
+        CPUStates::kUser_, CPUStates::kNice_,
+        CPUStates::kSystem_, CPUStates::kSoftIRQ_,
+        CPUStates::kSteal_, CPUStates::kGuest_,
+        CPUStates::kGuestNice_
+    };
+
+    float non_idle = 0.0;
+    for (int& i : cpu_states)
+      non_idle += stol(cpu_load[i]);
+    
+    return non_idle;
+}
+
+// COMPLETED: Read and return the number of idle jiffies for the system
+long LinuxParser::IdleJiffies()
+{
+    auto cpu_load = LinuxParser::CpuUtilization();
+    vector<int> cpu_states{CPUStates::kIdle_, CPUStates::kIOwait_};
+    float idle = 0.0;
+    for (int& i : cpu_states)
+      idle += stol(cpu_load[i]);
+    
+    return idle;
+}
 
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { return {}; }
