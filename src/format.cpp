@@ -2,12 +2,10 @@
 
 #include "format.h"
 
-using std::string;
-
-// TODO: Complete this helper function
+// COMPLETED: Complete this helper function
 // INPUT: Long int measuring seconds
 // OUTPUT: HH:MM:SS
-string Format::ElapsedTime(long seconds)
+std::string Format::ElapsedTime(long seconds)
 {
     // calculate hours, minutes & seconds
     std::string h = std::to_string(seconds / 3600);
