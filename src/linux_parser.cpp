@@ -10,9 +10,6 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-// EXTRA FROM STUDENT: prevent code redundancy.
-std::string getValueFrom(std::string sysFileName, std::string propName);
-
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -334,22 +331,4 @@ long LinuxParser::UpTime(int pid)
         }
     }
     return (UpTime() - (jiffies / sysconf(_SC_CLK_TCK)));
-}
-
-std::string getValueFrom(std::string sysFileName, std::string propName)
-{
-  std::string line, propName_, propValue;
-  std::ifstream statsFile(LinuxParser::kProcDirectory + sysFileName);
-  if (statsFile.is_open())
-  {
-    while (std::getline(statsFile, line))
-    {      
-      std::istringstream lineStream(line);
-      lineStream >> propName >> propValue;
-      if (propName_ == propName)
-        return propValue;
-    }
-  }
-
-  return string();
 }
