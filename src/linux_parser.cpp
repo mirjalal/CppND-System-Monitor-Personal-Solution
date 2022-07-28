@@ -137,7 +137,7 @@ long LinuxParser::ActiveJiffies(int pid)
         }
     }
 
-    return 0;
+    return jiffies;
 }
 
 // COMPLETED: Read and return the number of active jiffies for the system
@@ -313,4 +313,6 @@ std::string getValueFrom(std::string sysFileName, std::string propName)
         return propValue;
     }
   }
+
+  return string();
 }
