@@ -22,12 +22,16 @@ vector<Process>& System::Processes()
 {
     vector<int> pids = LinuxParser::Pids();
     processes_.clear();
-    processes_.resize(pids.size());
+
+  	vector<Process> temp{};
     for (int pid : pids) {
         Process proc;
         proc.Pid(pid);
-        processes_.emplace_back(proc);
+      	temp.emplace_back(proc);
     }
+  
+  	std::copy_if(temp.begin(), temp.end(), std::back_inserter(processes_), [](Process p){ return p.Command() != ""; } );
+  
     std::sort(processes_.begin(), processes_.end());
     return processes_;
 }
